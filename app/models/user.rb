@@ -36,4 +36,20 @@ class User < ApplicationRecord
   def feed_microposts
     Micropost.where(user_id: self.following_ids + [self.id])
   end
+
+  # 「ユーザー」が「マイクロポスト」を「お気に入りする」
+  def favorite(micropost)
+     self.favorites.find_or_create_by(micropost_id: micropost.id)
+  end
+
+  # 「ユーザー」が「マイクロポスト」を「お気に入りから解除する」
+  def unfavorite(micropost)
+    favorite = self.favorites.find_by(micropost_id: micropost.id)
+    favorite.destroy if favorite
+  end
+
+  # 「ユーザー」が「マイクロポスト」を「既にお気に入りにしているの？」
+  def favorite?(micropost)
+    self.favorite_posts.include?(micropost)
+  end
 end
